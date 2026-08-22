@@ -1,4 +1,4 @@
-struct MapLog end
+struct MapLog <: AbstractBijector end
 (::MapLog)(x) = map(log, x)
 function with_logabsdet_jacobian(::MapLog, x::AbstractArray{T}) where {T<:Number}
     y = map(log, x)
@@ -6,7 +6,7 @@ function with_logabsdet_jacobian(::MapLog, x::AbstractArray{T}) where {T<:Number
 end
 inverse(::MapLog) = MapExp()
 
-struct MapExp end
+struct MapExp <: AbstractBijector end
 (::MapExp)(x) = map(exp, x)
 function with_logabsdet_jacobian(::MapExp, x::AbstractArray{T}) where {T<:Number}
     y = map(exp, x)

@@ -17,15 +17,15 @@ Note that because of the independence requirement, the unconstrained vectorised 
 For example, when sampling from a `Dirichlet` distribution, the original form is a vector that always sums to 1.
 The unconstrained vectorised form will have one element less than the original form, because this constraint is eliminated.
 
-Plaice.jl provides functionality to convert between these three forms, via the following functions.
+Plaice.jl provides functionality to convert between these three forms, via subtypes of `Plaice.AbstractBijector`.
 Assuming that `x = rand(d)` for some distribution `d`:
 
-  - `to_vec(d)` is a function which converts `x` to the vectorised form
-  - `from_vec(d)` is the inverse of `to_vec(d)`
+  - `to_vec(d)` is an `AbstractBijector` which converts `x` to the vectorised form
+  - `from_vec(d)` is the inverse of `to_vec(d)`, also an `AbstractBijector`
   - `vec_length(d)` returns the length of `to_vec(d)(x)`
   - `optic_vec(d)` returns a vector of optics that describes how each element of `to_vec(d)(x)` is accessed from `x`
-  - `to_unconstrained_vec(d)` is a function which converts `x` to the unconstrained vectorised form
-  - `from_unconstrained_vec(d)` is the inverse of `to_unconstrained_vec(d)`
+  - `to_unconstrained_vec(d)` is an `AbstractBijector` which converts `x` to the unconstrained vectorised form
+  - `from_unconstrained_vec(d)` is the inverse of `to_unconstrained_vec(d)`, also an `AbstractBijector`
   - `unconstrained_vec_length(d)` returns the length of `to_unconstrained_vec(d)(x)`
   - `unconstrained_optic_vec(d)` returns a vector of optics that describes how each element of `to_unconstrained_vec(d)(x)` is accessed from `x` (if possible)
 
@@ -47,13 +47,20 @@ julia> to_unconstrained_vec(d)(x)
  0.24200871395677753
 ```
 
-The bijectors here also implement `ChangesOfVariables.with_logabsdet_jacobian` as well as `InverseFunctions.inverse`.
+Subtypes of `AbstractBijector` must minimally implement `ChangesOfVariables.with_logabsdet_jacobian` as well as `InverseFunctions.inverse`.
+This is tested for all of Plaice's own bijectors.
+By defining `with_logabsdet_jacobian`, you can also get default definitions for `(b::AbstractBijector)(x)` and `logabsdet_jacobian(b, x)`.
+
+```@docs
+logabsdet_jacobian
+```
 
 ## Implementing your own vector bijector
 
 The full Plaice interface consists of the following functions:
 
 ```@docs
+Plaice.AbstractBijector
 Plaice.from_vec
 Plaice.to_vec
 Plaice.from_unconstrained_vec

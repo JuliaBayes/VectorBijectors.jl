@@ -10,7 +10,6 @@ struct Exp{L<:Number} <: ScalarToScalarBijector
 end
 is_monotonically_increasing(e::Exp) = e.sign > 0
 is_monotonically_decreasing(e::Exp) = e.sign < 0
-(e::Exp)(y::Number) = first(with_logabsdet_jacobian(e, y))
 function with_logabsdet_jacobian(e::Exp, y::Number)
     x = exp(y)
     return ((e.sign * x) + e.bound, y)
@@ -35,7 +34,6 @@ struct Log{L<:Number} <: ScalarToScalarBijector
 end
 is_monotonically_increasing(l::Log) = l.sign > 0
 is_monotonically_decreasing(l::Log) = l.sign < 0
-(l::Log)(x::Number) = first(with_logabsdet_jacobian(l, x))
 function with_logabsdet_jacobian(l::Log, x::Number)
     logx = log(l.sign * (x - l.bound))
     return (logx, -logx)

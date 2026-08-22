@@ -2,10 +2,9 @@
 # gives us an ordered vector, but we are not done there: we need to then map that ordered
 # vector back to a regular (unordered) vector. This uses something similar to
 # OrderedBijector(), but we reimplement it here to avoid extra allocations.
-struct JointOrderWrap{B<:ScalarToScalarBijector}
+struct JointOrderWrap{B<:ScalarToScalarBijector} <: AbstractBijector
     bijector::B
 end
-(w::JointOrderWrap)(x::AbstractVector) = first(with_logabsdet_jacobian(w, x))
 function with_logabsdet_jacobian(m::JointOrderWrap, x::AbstractVector{T}) where {T<:Number}
     # `x` is always an ordered vector. Sometimes, mapping m.bijector over x doesn't give
     # an ordered vector: it could give a *reverse* ordered vector, if m.bijector performs
@@ -36,10 +35,9 @@ function with_logabsdet_jacobian(m::JointOrderWrap, x::AbstractVector{T}) where 
 end
 inverse(m::JointOrderWrap) = InverseJointOrderWrap(inverse(m.bijector))
 
-struct InverseJointOrderWrap{B<:ScalarToScalarBijector}
+struct InverseJointOrderWrap{B<:ScalarToScalarBijector} <: AbstractBijector
     bijector::B
 end
-(w::InverseJointOrderWrap)(y::AbstractVector) = first(with_logabsdet_jacobian(w, y))
 function with_logabsdet_jacobian(
     m::InverseJointOrderWrap,
     y::AbstractVector{T},

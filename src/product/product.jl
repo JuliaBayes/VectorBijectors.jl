@@ -17,7 +17,7 @@ _map_inverse(t::AbstractArray) = inverse.(t)
     return expr
 end
 
-struct ProductVecTransform{TTrf,Trng,D}
+struct ProductVecTransform{TTrf,Trng,D} <: AbstractBijector
     "A collection of vectorisation transforms, one for each component of the product
     distribution. These may either be `to_vec` or `to_unconstrained_vec` transforms, which in turn
     determines the overall behaviour of this transform.
@@ -33,7 +33,7 @@ struct ProductVecTransform{TTrf,Trng,D}
     that all distributions in a product distribution have the same size."
     base_size::D
 end
-struct ProductVecInvTransform{TTrf,Trng,D}
+struct ProductVecInvTransform{TTrf,Trng,D} <: AbstractBijector
     "A collection of inverse vectorisation transforms, one for each component of the product
     distribution. These may either be `from_vec` or `from_unconstrained_vec` transforms, which in
     turn determines the overall behaviour of this transform."

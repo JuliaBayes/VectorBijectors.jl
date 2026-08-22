@@ -1,7 +1,16 @@
 using Pkg: Pkg
 Pkg.develop(; path=dirname(@__DIR__))
 
-using Documenter, DocumenterCodeBlocks, Plaice, Distributions
+using Documenter
+using DocumenterCodeBlocks
+using DocumenterInterLinks
+using Plaice
+using Distributions
+
+links = InterLinks(
+    "ChangesOfVariables" => "https://juliamath.github.io/ChangesOfVariables.jl/stable/",
+    "InverseFunctions" => "https://juliamath.github.io/InverseFunctions.jl/stable/",
+)
 
 makedocs(;
     sitename="Plaice",
@@ -9,7 +18,7 @@ makedocs(;
     modules=[Plaice],
     pages=["index.md", "example.md"],
     checkdocs=:export,
-    plugins=[CodeBlocks()],
+    plugins=[CodeBlocks(), links],
 )
 
 deploydocs(; repo="github.com/JuliaBayes/Plaice.jl.git", push_preview=true)

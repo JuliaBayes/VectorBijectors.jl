@@ -4,6 +4,7 @@ using VarNames: VarNames, @opticof
 import ChangesOfVariables: with_logabsdet_jacobian
 import InverseFunctions: inverse
 
+include("common.jl")
 include("bijector_types.jl")
 include("interface.jl")
 export from_vec
@@ -19,12 +20,12 @@ export has_constant_vec_bijector
 export scalar_to_scalar_bijector
 export is_monotonically_increasing
 export is_monotonically_decreasing
+export AbstractBijector
 export TypedIdentity, Log, Untruncate
 # re-exports
 export with_logabsdet_jacobian
+export logabsdet_jacobian
 export inverse
-
-include("common.jl")
 
 include("univariate/univariate.jl")
 include("univariate/positive.jl")

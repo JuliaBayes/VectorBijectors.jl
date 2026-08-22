@@ -8,7 +8,7 @@ function _get_cartesian_indices(n::Int, uplo::Char)
     end
 end
 
-struct CholeskyVec
+struct CholeskyVec <: AbstractBijector
     n::Int
     uplo::Char
 end
@@ -20,10 +20,13 @@ function with_logabsdet_jacobian(c::CholeskyVec, x::LA.Cholesky{T}) where {T<:Nu
     return (c(x), zero(T))
 end
 
-struct CholeskyUnVec
+struct CholeskyUnVec <: AbstractBijector
     n::Int
     uplo::Char
 end
+inverse(c::CholeskyVec) = CholeskyUnVec(c.n, c.uplo)
+inverse(c::CholeskyUnVec) = CholeskyVec(c.n, c.uplo)
+
 function (c::CholeskyUnVec)(xvec::AbstractVector{T}) where {T<:Number}
     x = if c.uplo == 'U'
         LA.Cholesky(LA.UpperTriangular(zeros(T, c.n, c.n)))

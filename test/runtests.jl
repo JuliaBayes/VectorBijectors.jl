@@ -10,6 +10,7 @@ if !Sys.iswindows()
 end
 
 @testset "Plaice.jl" begin
+    include("interface.jl")
     include("distributions/univariate.jl")
     include("distributions/multivariate.jl")
     include("distributions/matrix.jl")

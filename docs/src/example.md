@@ -9,12 +9,12 @@ We start with something simple: a bijector that performs a cyclic permutation of
 ```@example cyclic
 using Plaice
 
-struct CircShift
+struct CircShift <: AbstractBijector
     shift::Int
 end
 ```
 
-The most important function to implement is `with_logabsdet_jacobian`.
+Subtypes of `AbstractBijector` should implement two functions: `with_logabsdet_jacobian` and `inverse`.
 
 Let's think for a moment about what the Jacobian is.
 `CircShift` is a mapping from `ℝⁿ → ℝⁿ` that permutes the elements of the input vector.
@@ -48,6 +48,8 @@ function Plaice.with_logabsdet_jacobian(
     y = circshift(x, b.shift)
     return y, zero(T)
 end
+
+with_logabsdet_jacobian(CircShift(1), [1.0, 2.0, 3.0])
 ```
 
 !!! note
@@ -71,18 +73,27 @@ function Plaice.with_logabsdet_jacobian(b::CircShift, x::AbstractVector)
 end
 ```
 
-`CircShift` should itself also be callable.
-In particular, we expect that `(c::CircShift)(x)` should perform the forward transformation.
+That covers the necessary methods for `with_logabsdet_jacobian`.
+By defining `with_logabsdet_jacobian`, we also get 'for free' the implementation of the forward transform, by calling the bijector as a function:
 
 ```@example cyclic
-function (b::CircShift)(x::AbstractVector{T}) where {T<:Number}
-    return circshift(x, b.shift)
-end
+CircShift(1)([1.0, 2.0, 3.0])
 ```
 
-You can implement this simply by calling `first(with_logabsdet_jacobian(b, x))` to avoid code duplication, if there isn't a performance concern.
+as well as [`logabsdet_jacobian`](@ref):
 
-Finally, we also define the inverse bijector:
+```@example cyclic
+logabsdet_jacobian(CircShift(1), [1.0, 2.0, 3.0])
+```
+
+These have default definitions for all `AbstractBijector`s and simply delegate to `with_logabsdet_jacobian`.
+However, if you need improved performance, you can also overload these functions for your specific `AbstractBijector` type.
+For example, `logabsdet_jacobian` could be directly implemented without performing the actual shift.
+
+At the very start, we said that bijectors should also define an `inverse`.
+Note that, for full compatibility, `inverse(::AbstractBijector)` should return another object that subtypes `AbstractBijector`.
+In our case this is particularly straightforward: the inverse is just another `CircShift` but in the opposite direction.
+However, in more complicated cases you may have to make a different type for the inverse transform.
 
 ```@example cyclic
 Plaice.inverse(b::CircShift) = CircShift(-b.shift)
@@ -115,7 +126,7 @@ We can implement this first:
 ```@example stereographic
 using Plaice
 
-struct StereographicProj end
+struct StereographicProj <: AbstractBijector end
 function (s::StereographicProj)(x::AbstractVector{T}) where {T<:Number}
     y = similar(x, 2)
     denom = one(T) - x[3]
@@ -230,7 +241,7 @@ logjac = logabsdet(jac)[1]
 Hopefully this is approximately the same!
 
 ```@example stereographic
-last(with_logabsdet_jacobian(StereographicProj(), x))
+logabsdet_jacobian(StereographicProj(), x)
 ```
 
 You can also rerun the code blocks above with `sgn = -1` to verify that our log-Jacobian implementation does indeed behave correctly for both positive and negative values of $x_3$.

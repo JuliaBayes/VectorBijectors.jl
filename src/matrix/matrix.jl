@@ -2,7 +2,7 @@
 
 # Somehow, ChangesOfVariables doesn't have a logjac implemented for `vec`, so we need to
 # wrap it.
-struct Vec{N}
+struct Vec{N} <: AbstractBijector
     size::NTuple{N,Int}
 end
 (::Vec)(x::AbstractArray) = vec(x)
@@ -15,7 +15,7 @@ function with_logabsdet_jacobian(::Vec, x::AbstractArray)
     return vec(x), false
 end
 
-struct Reshape{N}
+struct Reshape{N} <: AbstractBijector
     size::NTuple{N,Int}
 end
 (r::Reshape)(x::AbstractArray) = reshape(x, r.size)

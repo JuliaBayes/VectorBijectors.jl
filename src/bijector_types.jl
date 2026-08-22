@@ -70,7 +70,7 @@ end
 ####################
 # Simplex bijector #
 ####################
-struct SimplexBijector end
+struct SimplexBijector <: AbstractBijector end
 
 (b::SimplexBijector)(x) = _simplex_bijector(x, b)
 inverse(::SimplexBijector) = InverseSimplexBijector()
@@ -79,7 +79,7 @@ function with_logabsdet_jacobian(b::SimplexBijector, x)
     return _simplex_bijector(x, b), _logabsdetjac_simplex(b, x)
 end
 
-struct InverseSimplexBijector end
+struct InverseSimplexBijector <: AbstractBijector end
 inverse(::InverseSimplexBijector) = SimplexBijector()
 
 (::InverseSimplexBijector)(y) = _simplex_inv_bijector(y)
@@ -396,7 +396,7 @@ A bijector to transform a correlation matrix to an unconstrained vector.
 # Reference
 https://mc-stan.org/docs/reference-manual/correlation-matrix-transform.html
 """
-struct VecCorrBijector end
+struct VecCorrBijector <: AbstractBijector end
 
 (b::VecCorrBijector)(X) = _link_chol_lkj_from_upper(cholesky_upper(X))
 inverse(::VecCorrBijector) = InverseVecCorrBijector()
@@ -406,10 +406,8 @@ function with_logabsdet_jacobian(b::VecCorrBijector, x)
     return y, -_logabsdetjac_inv_corr(y)
 end
 
-struct InverseVecCorrBijector end
+struct InverseVecCorrBijector <: AbstractBijector end
 inverse(::InverseVecCorrBijector) = VecCorrBijector()
-
-(::InverseVecCorrBijector)(y) = first(with_logabsdet_jacobian(InverseVecCorrBijector(), y))
 
 function with_logabsdet_jacobian(::InverseVecCorrBijector, y)
     U_logJ = _inv_link_chol_lkj(y)
@@ -437,7 +435,7 @@ A bijector to transform a Cholesky factor of a correlation matrix to an unconstr
 # Reference
 https://mc-stan.org/docs/reference-manual/cholesky-factors-of-correlation-matrices-1
 """
-struct VecCholeskyBijector
+struct VecCholeskyBijector <: AbstractBijector
     mode::Symbol
     function VecCholeskyBijector(uplo)
         s = Symbol(uplo)
@@ -468,12 +466,10 @@ function with_logabsdet_jacobian(b::VecCholeskyBijector, x)
     return y, -_logabsdetjac_inv_chol(y)
 end
 
-struct InverseVecCholeskyBijector
+struct InverseVecCholeskyBijector <: AbstractBijector
     mode::Symbol
 end
 inverse(b::InverseVecCholeskyBijector) = VecCholeskyBijector(b.mode)
-
-(b::InverseVecCholeskyBijector)(y) = first(with_logabsdet_jacobian(b, y))
 
 function with_logabsdet_jacobian(b::InverseVecCholeskyBijector, y)
     factors, logJ = _inv_link_chol_lkj(y)

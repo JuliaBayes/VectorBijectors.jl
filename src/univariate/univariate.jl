@@ -4,7 +4,7 @@
 Wrap a bijector `B` which transforms scalars to scalars, into a bijector that transforms
 vectors of length one to scalars.
 """
-struct OnlyWrap{B<:ScalarToScalarBijector}
+struct OnlyWrap{B<:ScalarToScalarBijector} <: AbstractBijector
     bijector::B
 end
 # Use sum(x) instead of x[] to avoid scalar indexing.
@@ -20,7 +20,7 @@ inverse(w::OnlyWrap) = VectWrap(inverse(w.bijector))
 Wrap a bijector `B` which transforms scalars to scalars, into a bijector that transforms
 scalars to vectors of length one.
 """
-struct VectWrap{B<:ScalarToScalarBijector}
+struct VectWrap{B<:ScalarToScalarBijector} <: AbstractBijector
     bijector::B
 end
 (w::VectWrap)(x) = [w.bijector(x)]

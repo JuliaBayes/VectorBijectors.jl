@@ -1,12 +1,56 @@
 """
-    ScalarToScalarBijector
+    AbstractBijector
+
+An abstract type for bijective transforms.
+
+Subtypes must implement two methods:
+
+- [`with_logabsdet_jacobian`](@extref ChangesOfVariables.with_logabsdet_jacobian), which
+  should return a tuple of (transformed value, log absolute determinant Jacobian) when
+  called with a value to transform.
+- [`inverse`](@extref InverseFunctions.inverse), which should return another
+  `AbstractBijector` that represents the inverse transformation.
+
+The methods
+
+- `(b::AbstractBijector)(x)`, to return just the transformed value, and
+- [`logabsdet_jacobian(b::AbstractBijector, x)`](@ref), to return just the log-Jacobian,
+
+are then automatically derived for subtypes of `AbstractBijector` by simply returning either
+component of `with_logabsdet_jacobian`'s result. However, custom implementations of those
+methods may be provided for efficiency reasons if desired.
+"""
+abstract type AbstractBijector end
+
+"""
+    (b::AbstractBijector)(x)
+
+Return the transformed value of `x` under the bijector `b`.
+
+By default, this returns `first(with_logabsdet_jacobian(b, x))`, but subtypes of
+`AbstractBijector` may provide specialised implementations for efficiency.
+"""
+(b::AbstractBijector)(x) = first(with_logabsdet_jacobian(b, x))
+
+"""
+    logabsdet_jacobian(b::AbstractBijector, x)
+
+Return the log absolute determinant of the Jacobian of the bijector `b` at `x`.
+
+By default, this returns `last(with_logabsdet_jacobian(b, x))`, but subtypes of
+`AbstractBijector` may provide specialised implementations for efficiency.
+"""
+logabsdet_jacobian(b::AbstractBijector, x) = last(with_logabsdet_jacobian(b, x))
+
+"""
+    ScalarToScalarBijector <: AbstractBijector
 
 An abstract type for bijectors that map scalars to scalars.
 
 Any subtype of this must implement `is_monotonically_increasing` and
 `is_monotonically_decreasing`. One of them should be true and one should be false.
 """
-abstract type ScalarToScalarBijector end
+abstract type ScalarToScalarBijector <: AbstractBijector end
 
 """
     TypedIdentity <: ScalarToScalarBijector

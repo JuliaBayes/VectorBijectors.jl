@@ -81,6 +81,7 @@ function test_all(
     )
 
     @testset "$(test_name(d))" begin
+        test_bijector_interface(d)
         test_roundtrip(d)
         test_roundtrip_inverse(d, test_in_support, roundtrip_atol, roundtrip_rtol)
         test_type_stability(d, test_construction_type_stable)
@@ -92,6 +93,26 @@ function test_all(
         if reactant_loaded
             test_reactant(d)
         end
+    end
+end
+
+"""
+Sanity check: make sure that the bijectors exist and are each other's inverses.
+"""
+function test_bijector_interface(d)
+    @testset "bijector interface: $(test_name(d))" begin
+        fv = from_vec(d)
+        tv = to_vec(d)
+        @test fv isa AbstractBijector
+        @test tv isa AbstractBijector
+        @test inverse(fv) == tv
+        @test inverse(tv) == fv
+        fuv = from_unconstrained_vec(d)
+        tuv = to_unconstrained_vec(d)
+        @test fuv isa AbstractBijector
+        @test tuv isa AbstractBijector
+        @test inverse(fuv) == tuv
+        @test inverse(tuv) == fuv
     end
 end
 

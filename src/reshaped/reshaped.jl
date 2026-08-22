@@ -22,7 +22,7 @@ unconstrained vector. Thus, ReshapeWrapper must:
 - first convert the input from `reshaped_size` to `original_size` via `reshape`
 - then apply the wrapped `bijector`.
 """
-struct ReshapeWrapper{N1,N2,T1<:NTuple{N1,Int},T2<:NTuple{N2,Int},B}
+struct ReshapeWrapper{N1,N2,T1<:NTuple{N1,Int},T2<:NTuple{N2,Int},B} <: AbstractBijector
     reshaped_size::T1
     original_size::T2
     bijector::B
@@ -43,9 +43,6 @@ function with_logabsdet_jacobian(
     x = _reshape_or_only(rx, r.original_size)
     return with_logabsdet_jacobian(r.bijector, x)
 end
-function (r::ReshapeWrapper{N1})(rx::AbstractArray{T,N1}) where {T,N1}
-    return first(with_logabsdet_jacobian(r, rx))
-end
 function inverse(r::ReshapeWrapper)
     return InvReshapeWrapper(r.reshaped_size, r.original_size, inverse(r.bijector))
 end
@@ -56,7 +53,7 @@ end
 This is the inverse of ReshapeWrapper. It does a similar thing to `ReshapeWrapper`, but in a
 different order, since it must apply `inv_bijector` first before reshaping the output.
 """
-struct InvReshapeWrapper{N1,N2,T1<:NTuple{N1,Int},T2<:NTuple{N2,Int},B}
+struct InvReshapeWrapper{N1,N2,T1<:NTuple{N1,Int},T2<:NTuple{N2,Int},B} <: AbstractBijector
     reshaped_size::T1
     original_size::T2
     inv_bijector::B
@@ -75,7 +72,6 @@ function with_logabsdet_jacobian(r::InvReshapeWrapper, x::AbstractVector)
     rx_reshaped = _reshape_or_only(rx, r.reshaped_size)
     return (rx_reshaped, ladj)
 end
-(r::InvReshapeWrapper)(x::AbstractVector) = first(with_logabsdet_jacobian(r, x))
 function inverse(r::InvReshapeWrapper)
     return ReshapeWrapper(r.reshaped_size, r.original_size, inverse(r.inv_bijector))
 end

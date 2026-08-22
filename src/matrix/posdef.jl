@@ -8,13 +8,8 @@
 import LinearAlgebra as LA
 import IrrationalConstants: logtwo
 
-struct PosDef
+struct PosDef <: AbstractBijector
     original_size::Int
-end
-function (p::PosDef)(x::AbstractMatrix{T}) where {T<:Number}
-    # This is technically inefficient as it performs a few extra multiplications
-    # and additions.
-    return first(with_logabsdet_jacobian(p, x))
 end
 function with_logabsdet_jacobian(p::PosDef, x::AbstractMatrix{T}) where {T<:Number}
     Base.require_one_based_indexing(x)
@@ -43,13 +38,8 @@ function with_logabsdet_jacobian(p::PosDef, x::AbstractMatrix{T}) where {T<:Numb
 end
 inverse(p::PosDef) = InvPosDef(p.original_size)
 
-struct InvPosDef
+struct InvPosDef <: AbstractBijector
     original_size::Int
-end
-function (ip::InvPosDef)(yvec::AbstractVector{T}) where {T<:Number}
-    # Like above, this is technically inefficient as it performs a few extra multiplications
-    # and additions.
-    return first(with_logabsdet_jacobian(ip, yvec))
 end
 function with_logabsdet_jacobian(ip::InvPosDef, yvec::AbstractVector{T}) where {T<:Number}
     d = ip.original_size

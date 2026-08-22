@@ -2,20 +2,20 @@
 const ReshapedUnivariateDistribution =
     D.ReshapedDistribution{<:Any,<:D.ValueSupport,<:D.UnivariateDistribution}
 
-VB.to_vec(d::D.ReshapedDistribution) =
-    VB.ReshapeWrapper(size(d), size(d.dist), VB.to_vec(d.dist))
-function VB.from_vec(d::D.ReshapedDistribution)
-    return VB.InvReshapeWrapper(size(d), size(d.dist), VB.from_vec(d.dist))
+Plaice.to_vec(d::D.ReshapedDistribution) =
+    Plaice.ReshapeWrapper(size(d), size(d.dist), Plaice.to_vec(d.dist))
+function Plaice.from_vec(d::D.ReshapedDistribution)
+    return Plaice.InvReshapeWrapper(size(d), size(d.dist), Plaice.from_vec(d.dist))
 end
-VB.vec_length(d::D.ReshapedDistribution) = VB.vec_length(d.dist)
+Plaice.vec_length(d::D.ReshapedDistribution) = Plaice.vec_length(d.dist)
 
-function VB.to_unconstrained_vec(d::D.ReshapedDistribution)
-    return VB.ReshapeWrapper(size(d), size(d.dist), VB.to_unconstrained_vec(d.dist))
+function Plaice.to_unconstrained_vec(d::D.ReshapedDistribution)
+    return Plaice.ReshapeWrapper(size(d), size(d.dist), Plaice.to_unconstrained_vec(d.dist))
 end
-function VB.from_unconstrained_vec(d::D.ReshapedDistribution)
-    return VB.InvReshapeWrapper(size(d), size(d.dist), VB.from_unconstrained_vec(d.dist))
+function Plaice.from_unconstrained_vec(d::D.ReshapedDistribution)
+    return Plaice.InvReshapeWrapper(size(d), size(d.dist), Plaice.from_unconstrained_vec(d.dist))
 end
-VB.unconstrained_vec_length(d::D.ReshapedDistribution) = VB.unconstrained_vec_length(d.dist)
+Plaice.unconstrained_vec_length(d::D.ReshapedDistribution) = Plaice.unconstrained_vec_length(d.dist)
 
 # optic_vec requires some care. We can't just reuse the original distribution's optics,
 # i.e., `optic_vec(d) = optic_vec(d.dist)` because the axes may have changed due to
@@ -33,8 +33,8 @@ VB.unconstrained_vec_length(d::D.ReshapedDistribution) = VB.unconstrained_vec_le
 # that has a more complicated structure than an array index. For example, `d.dist` couldn't
 # be something like LKJCholesky because you can't call `reshape(LKJCholesky(...), ...)`
 # anyway.
-function VB.optic_vec(d::D.ReshapedDistribution)
-    original_optics = VB.optic_vec(d.dist)
+function Plaice.optic_vec(d::D.ReshapedDistribution)
+    original_optics = Plaice.optic_vec(d.dist)
     linear_indices_original = LinearIndices(size(d.dist))
     cartesian_indices_reshaped = CartesianIndices(size(d))
     mapped_optics = map(original_optics) do opt
@@ -56,14 +56,14 @@ function VB.optic_vec(d::D.ReshapedDistribution)
 end
 # If `d.dist` is univariate that is a special case because `optic_vec(d.dist)` would return
 # [Iden]`. In that case we need to tack on the array indices.
-function VB.optic_vec(d::ReshapedUnivariateDistribution)
+function Plaice.optic_vec(d::ReshapedUnivariateDistribution)
     # size(d) should be a tuple that contains only 1's, so we can just reuse it
     return [VarNames.Index(size(d), (;))]
 end
 
 # unconstrained_optic_vec is the same...
-function VB.unconstrained_optic_vec(d::D.ReshapedDistribution)
-    original_optics = VB.unconstrained_optic_vec(d.dist)
+function Plaice.unconstrained_optic_vec(d::D.ReshapedDistribution)
+    original_optics = Plaice.unconstrained_optic_vec(d.dist)
     linear_indices_original = LinearIndices(size(d.dist))
     cartesian_indices_reshaped = CartesianIndices(size(d))
     mapped_optics = map(original_optics) do opt
@@ -85,6 +85,6 @@ function VB.unconstrained_optic_vec(d::D.ReshapedDistribution)
     end
     return mapped_optics
 end
-function VB.unconstrained_optic_vec(d::ReshapedUnivariateDistribution)
+function Plaice.unconstrained_optic_vec(d::ReshapedUnivariateDistribution)
     return [VarNames.Index(size(d), (;))]
 end

@@ -1,4 +1,4 @@
-function VB.optic_vec(d::D.LKJCholesky)
+function Plaice.optic_vec(d::D.LKJCholesky)
     n = first(size(d))
     sym = if d.uplo == 'U'
         :U
@@ -6,22 +6,22 @@ function VB.optic_vec(d::D.LKJCholesky)
         :L
     end
     return [
-        VarNames.@opticof(_.$sym[i, j]) for (i, j) in VB._get_cartesian_indices(n, d.uplo)
+        VarNames.@opticof(_.$sym[i, j]) for (i, j) in Plaice._get_cartesian_indices(n, d.uplo)
     ]
 end
 
-VB.from_vec(d::D.LKJCholesky) = VB.CholeskyUnVec(first(size(d)), d.uplo)
-VB.to_vec(d::D.LKJCholesky) = VB.CholeskyVec(first(size(d)), d.uplo)
-function VB.vec_length(d::D.LKJCholesky)
+Plaice.from_vec(d::D.LKJCholesky) = Plaice.CholeskyUnVec(first(size(d)), d.uplo)
+Plaice.to_vec(d::D.LKJCholesky) = Plaice.CholeskyVec(first(size(d)), d.uplo)
+function Plaice.vec_length(d::D.LKJCholesky)
     n = first(size(d))
     return div(n * (n + 1), 2)
 end
-VB.from_unconstrained_vec(d::D.LKJCholesky) = VB.inverse(VB.VecCholeskyBijector(d.uplo))
-VB.to_unconstrained_vec(d::D.LKJCholesky) = VB.VecCholeskyBijector(d.uplo)
-function VB.unconstrained_vec_length(d::D.LKJCholesky)
+Plaice.from_unconstrained_vec(d::D.LKJCholesky) = Plaice.inverse(Plaice.VecCholeskyBijector(d.uplo))
+Plaice.to_unconstrained_vec(d::D.LKJCholesky) = Plaice.VecCholeskyBijector(d.uplo)
+function Plaice.unconstrained_vec_length(d::D.LKJCholesky)
     n = first(size(d))
     return div(n * (n - 1), 2)
 end
-function VB.unconstrained_optic_vec(d::D.LKJCholesky)
-    return fill(nothing, VB.unconstrained_vec_length(d))
+function Plaice.unconstrained_optic_vec(d::D.LKJCholesky)
+    return fill(nothing, Plaice.unconstrained_vec_length(d))
 end

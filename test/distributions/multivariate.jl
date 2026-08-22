@@ -1,4 +1,4 @@
-module VBMultivariateTests
+module PlaiceMultivariateTests
 
 using Distributions
 using LinearAlgebra
@@ -35,4 +35,4 @@ multivariates = [
     end
 end
 
-end # module VBMultivariateTests
+end # module PlaiceMultivariateTests

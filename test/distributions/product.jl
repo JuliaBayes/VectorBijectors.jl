@@ -1,4 +1,4 @@
-module VBProductTests
+module PlaiceProductTests
 
 using Distributions
 using LinearAlgebra
@@ -147,4 +147,4 @@ enzyme_failures = [
     end
 end
 
-end # module VBProductTests
+end # module PlaiceProductTests

@@ -1,4 +1,4 @@
-module VBMatrixTests
+module PlaiceMatrixTests
 
 using Distributions
 using LinearAlgebra
@@ -54,4 +54,4 @@ matrix_dists = [
     end
 end
 
-end # module VBMatrixTests
+end # module PlaiceMatrixTests

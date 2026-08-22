@@ -1,4 +1,4 @@
-module VBCholeskyTests
+module PlaiceCholeskyTests
 
 using Distributions
 using LinearAlgebra
@@ -36,4 +36,4 @@ dists = [
     end
 end
 
-end # module VBCholeskyTests
+end # module PlaiceCholeskyTests

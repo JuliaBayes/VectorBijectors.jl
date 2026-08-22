@@ -9,12 +9,14 @@ Mooncake = "da2b9cff-9c12-43a0-ae48-6db2b0edb7d6"
 PDMats = "90014a1f-27ba-587c-ab20-58faa44d9150"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Plaice = "55802ec2-189d-45e6-a786-b4d97e4775f1"
+ProbabilityMeasures = "d96443b0-2461-4412-bb6f-797ac5201ef9"
 ReverseDiff = "37e2e3b7-166d-5795-8a7a-e32c996b4267"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 VarNames = "09a315b2-63fc-4165-8d7f-d59368e770cc"
 
 [sources]
 Plaice = {path = ".."}
+ProbabilityMeasures = {rev = "main", url = "https://github.com/JuliaBayes/ProbabilityMeasures.jl"}
 
 [compat]
 DifferentiationInterface = "0.7"

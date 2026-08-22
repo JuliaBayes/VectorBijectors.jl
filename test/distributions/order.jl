@@ -1,4 +1,4 @@
-module VBOrderTests
+module PlaiceOrderTests
 
 using Distributions
 using LinearAlgebra
@@ -59,4 +59,4 @@ joint_test_adtypes = [
     end
 end
 
-end # module VBOrderTests
+end # module PlaiceOrderTests

@@ -1,4 +1,4 @@
-@generated function VB._make_transform_inner(
+@generated function Plaice._make_transform_inner(
     dists::NTuple{NDists,D.Distribution},
     indiv_transform_fn,
     length_fn,
@@ -21,7 +21,7 @@
     return Expr(:block, exprs...)
 end
 
-function VB._make_transform_inner(
+function Plaice._make_transform_inner(
     dists::AbstractArray{<:D.Distribution},
     indiv_transform_fn,
     length_fn,
@@ -48,54 +48,54 @@ for (product_type, dist_field) in (
     (D.Product, :v),
 )
     @eval begin
-        function VB.from_vec(d::$product_type)
-            return VB._make_transform(
+        function Plaice.from_vec(d::$product_type)
+            return Plaice._make_transform(
                 d.$dist_field,
-                VB.from_vec,
-                VB.vec_length,
-                VB.ProductVecInvTransform,
+                Plaice.from_vec,
+                Plaice.vec_length,
+                Plaice.ProductVecInvTransform,
             )
         end
-        function VB.from_unconstrained_vec(d::$product_type)
-            return VB._make_transform(
+        function Plaice.from_unconstrained_vec(d::$product_type)
+            return Plaice._make_transform(
                 d.$dist_field,
-                VB.from_unconstrained_vec,
-                VB.unconstrained_vec_length,
-                VB.ProductVecInvTransform,
+                Plaice.from_unconstrained_vec,
+                Plaice.unconstrained_vec_length,
+                Plaice.ProductVecInvTransform,
             )
         end
-        function VB.to_vec(d::$product_type)
-            return VB._make_transform(
+        function Plaice.to_vec(d::$product_type)
+            return Plaice._make_transform(
                 d.$dist_field,
-                VB.to_vec,
-                VB.vec_length,
-                VB.ProductVecTransform,
+                Plaice.to_vec,
+                Plaice.vec_length,
+                Plaice.ProductVecTransform,
             )
         end
-        function VB.to_unconstrained_vec(d::$product_type)
-            return VB._make_transform(
+        function Plaice.to_unconstrained_vec(d::$product_type)
+            return Plaice._make_transform(
                 d.$dist_field,
-                VB.to_unconstrained_vec,
-                VB.unconstrained_vec_length,
-                VB.ProductVecTransform,
+                Plaice.to_unconstrained_vec,
+                Plaice.unconstrained_vec_length,
+                Plaice.ProductVecTransform,
             )
         end
 
-        VB.vec_length(d::$product_type) = sum(VB.vec_length, d.$dist_field)
-        VB.unconstrained_vec_length(d::$product_type) =
-            sum(VB.unconstrained_vec_length, d.$dist_field)
+        Plaice.vec_length(d::$product_type) = sum(Plaice.vec_length, d.$dist_field)
+        Plaice.unconstrained_vec_length(d::$product_type) =
+            sum(Plaice.unconstrained_vec_length, d.$dist_field)
     end
 end
 
 for f in (:optic_vec, :unconstrained_optic_vec)
     for (product_type, dist_field) in ((D.Product, :v), (D.ProductDistribution, :dists))
         @eval begin
-            function VB.$f(d::$product_type)
+            function Plaice.$f(d::$product_type)
                 optics = Union{}[]
-                idxs = VB._cartesian_indices(d.$dist_field)
+                idxs = Plaice._cartesian_indices(d.$dist_field)
                 for (idx, dist) in zip(idxs, d.$dist_field)
-                    this_dist_optics = VB.$f(dist)
-                    new_optics = map(optic -> VB.append_index(optic, idx), this_dist_optics)
+                    this_dist_optics = Plaice.$f(dist)
+                    new_optics = map(optic -> Plaice.append_index(optic, idx), this_dist_optics)
                     optics = vcat(optics, new_optics)
                 end
                 return optics
@@ -104,11 +104,11 @@ for f in (:optic_vec, :unconstrained_optic_vec)
     end
 
     @eval begin
-        function VB.$f(d::D.ProductNamedTupleDistribution)
+        function Plaice.$f(d::D.ProductNamedTupleDistribution)
             optics = Union{}[]
             for (nm, dist) in pairs(d.dists)
-                this_dist_optics = VB.$f(dist)
-                new_optics = map(optic -> VB.prepend_symbol(nm, optic), this_dist_optics)
+                this_dist_optics = Plaice.$f(dist)
+                new_optics = map(optic -> Plaice.prepend_symbol(nm, optic), this_dist_optics)
                 optics = vcat(optics, new_optics)
             end
             return optics
@@ -116,18 +116,18 @@ for f in (:optic_vec, :unconstrained_optic_vec)
     end
 end
 
-VB.has_constant_vec_bijector(::Type{<:IDENTITY_UNIVARIATES}) = true
-VB.has_constant_vec_bijector(::Type{<:POSITIVE_UNIVARIATES}) = true
+Plaice.has_constant_vec_bijector(::Type{<:IDENTITY_UNIVARIATES}) = true
+Plaice.has_constant_vec_bijector(::Type{<:POSITIVE_UNIVARIATES}) = true
 # between 0 and 1
-function VB.has_constant_vec_bijector(
+function Plaice.has_constant_vec_bijector(
     ::Type{<:Union{D.Beta,D.KSOneSided,D.NoncentralBeta,D.LogitNormal}},
 )
     return true
 end
-VB.has_constant_vec_bijector(::Type{<:D.DiscreteUnivariateDistribution}) = true
+Plaice.has_constant_vec_bijector(::Type{<:D.DiscreteUnivariateDistribution}) = true
 # Multivariates
-VB.has_constant_vec_bijector(::Type{<:D.AbstractMvNormal}) = true
-VB.has_constant_vec_bijector(::Type{<:D.AbstractMvTDist}) = true
-VB.has_constant_vec_bijector(::Type{<:D.AbstractMvLogNormal}) = true
-VB.has_constant_vec_bijector(::Type{<:SIMPLEX_MULTIVARIATES}) = true
-VB.has_constant_vec_bijector(::Type{<:D.DiscreteMultivariateDistribution}) = true
+Plaice.has_constant_vec_bijector(::Type{<:D.AbstractMvNormal}) = true
+Plaice.has_constant_vec_bijector(::Type{<:D.AbstractMvTDist}) = true
+Plaice.has_constant_vec_bijector(::Type{<:D.AbstractMvLogNormal}) = true
+Plaice.has_constant_vec_bijector(::Type{<:SIMPLEX_MULTIVARIATES}) = true
+Plaice.has_constant_vec_bijector(::Type{<:D.DiscreteMultivariateDistribution}) = true

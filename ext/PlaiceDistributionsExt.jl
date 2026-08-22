@@ -4,7 +4,6 @@ using Plaice
 using Distributions
 using VarNames
 
-const VB = Plaice
 const D = Distributions
 
 include("Distributions/test_utils.jl")

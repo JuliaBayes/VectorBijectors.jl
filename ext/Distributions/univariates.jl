@@ -1,20 +1,20 @@
 # General definitions that apply to all univariate distributions.
-function VB.from_unconstrained_vec(d::D.UnivariateDistribution)
-    return VB.OnlyWrap(VB.inverse(VB.scalar_to_scalar_bijector(d)))
+function Plaice.from_unconstrained_vec(d::D.UnivariateDistribution)
+    return Plaice.OnlyWrap(Plaice.inverse(Plaice.scalar_to_scalar_bijector(d)))
 end
-function VB.to_unconstrained_vec(d::D.UnivariateDistribution)
-    return VB.VectWrap(VB.scalar_to_scalar_bijector(d))
+function Plaice.to_unconstrained_vec(d::D.UnivariateDistribution)
+    return Plaice.VectWrap(Plaice.scalar_to_scalar_bijector(d))
 end
-VB.from_vec(::D.UnivariateDistribution) = VB.OnlyWrap(VB.TypedIdentity())
-VB.to_vec(::D.UnivariateDistribution) = VB.VectWrap(VB.TypedIdentity())
+Plaice.from_vec(::D.UnivariateDistribution) = Plaice.OnlyWrap(Plaice.TypedIdentity())
+Plaice.to_vec(::D.UnivariateDistribution) = Plaice.VectWrap(Plaice.TypedIdentity())
 
 # vect_length and unconstrained_vec_length are trivial
-VB.vec_length(::D.UnivariateDistribution) = 1
-VB.unconstrained_vec_length(::D.UnivariateDistribution) = 1
+Plaice.vec_length(::D.UnivariateDistribution) = 1
+Plaice.unconstrained_vec_length(::D.UnivariateDistribution) = 1
 
 # Optics are trivially obtainable.
-VB.optic_vec(::D.UnivariateDistribution) = [VarNames.Iden()]
-VB.unconstrained_optic_vec(::D.UnivariateDistribution) = [VarNames.Iden()]
+Plaice.optic_vec(::D.UnivariateDistribution) = [VarNames.Iden()]
+Plaice.unconstrained_optic_vec(::D.UnivariateDistribution) = [VarNames.Iden()]
 
 # These continuous distributions have support over the entire real line.
 const IDENTITY_UNIVARIATES = Union{
@@ -36,10 +36,10 @@ const IDENTITY_UNIVARIATES = Union{
     D.DiscreteUnivariateDistribution,
 }
 
-VB.scalar_to_scalar_bijector(::IDENTITY_UNIVARIATES) = TypedIdentity()
+Plaice.scalar_to_scalar_bijector(::IDENTITY_UNIVARIATES) = TypedIdentity()
 
 # Furthermore, scaling and shifting doesn't affect the support of these distributions
-function VB.scalar_to_scalar_bijector(
+function Plaice.scalar_to_scalar_bijector(
     ::D.AffineDistribution{<:Any,<:Any,<:IDENTITY_UNIVARIATES},
 )
     return TypedIdentity()
@@ -71,9 +71,9 @@ const POSITIVE_UNIVARIATES = Union{
     D.StudentizedRange,
     D.Weibull,
 }
-VB.scalar_to_scalar_bijector(d::POSITIVE_UNIVARIATES) = Log(minimum(d), 1)
+Plaice.scalar_to_scalar_bijector(d::POSITIVE_UNIVARIATES) = Log(minimum(d), 1)
 
-function VB.scalar_to_scalar_bijector(
+function Plaice.scalar_to_scalar_bijector(
     d::D.AffineDistribution{<:Any,<:Any,<:POSITIVE_UNIVARIATES},
 )
     s = sign(D.scale(d))
@@ -81,6 +81,6 @@ function VB.scalar_to_scalar_bijector(
 end
 
 # This is the fallback option for all other univariate continuous distributions.
-function VB.scalar_to_scalar_bijector(d::D.ContinuousUnivariateDistribution)
+function Plaice.scalar_to_scalar_bijector(d::D.ContinuousUnivariateDistribution)
     return Untruncate(minimum(d), maximum(d))
 end

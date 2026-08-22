@@ -1,4 +1,4 @@
-module VBUnivariateTests
+module PlaiceUnivariateTests
 
 using Distributions
 using Test
@@ -136,4 +136,4 @@ heterogeneous_mixtures = [
     end
 end
 
-end # module VBUnivariateTests
+end # module PlaiceUnivariateTests

@@ -1,4 +1,4 @@
-module VBReshapedTests
+module PlaiceReshapedTests
 
 using Distributions
 using LinearAlgebra
@@ -52,4 +52,4 @@ reshaped_no_enzyme = [reshape(Beta(2, 2), (1, 1, 1, 1, 1))]
     end
 end
 
-end # module VBReshapedTests
+end # module PlaiceReshapedTests

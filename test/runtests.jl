@@ -19,6 +19,7 @@ end
     # include("distributions/product.jl")
 
     include("pm/univariate.jl")
+    include("pm/multivariate.jl")
 end
 
 end # module PlaiceTests

@@ -16,7 +16,17 @@ end
 
 const PM = ProbabilityMeasures
 
-univariates = [PM.Normal(), PM.Exponential(), PM.Uniform(0.0, 1.0)]
+univariates = [
+    # Continuous
+    PM.Exponential(), # pos
+    PM.Laplace(), # iden
+    PM.Normal(), # iden
+    PM.Uniform(0.0, 1.0), # trunc
+    # Discrete
+    PM.Bernoulli(0.5),
+    PM.Binomial(5, 0.5),
+    PM.Categorical([0.2, 0.5, 0.3]),
+]
 
 @testset "PM Univariates" begin
     for d in univariates

@@ -16,7 +16,7 @@ VarNames = "09a315b2-63fc-4165-8d7f-d59368e770cc"
 
 [sources]
 Plaice = {path = ".."}
-ProbabilityMeasures = {rev = "main", url = "https://github.com/rsenne/ProbabilityMeasures.jl"}
+ProbabilityMeasures = {rev = "main", url = "https://github.com/JuliaBayes/ProbabilityMeasures.jl"}
 
 [compat]
 DifferentiationInterface = "0.7"
